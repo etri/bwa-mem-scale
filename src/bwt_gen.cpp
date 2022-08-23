@@ -345,10 +345,14 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable)
 	BWT *bwt;
 
 	bwt = (BWT*)calloc(1, sizeof(BWT));
+	if (bwt == NULL)
+		goto error;
 
 	bwt->textLength = 0;
 
 	bwt->cumulativeFreq = (bgint_t*)calloc((ALPHABET_SIZE + 1), sizeof(bgint_t));
+	if (bwt->cumulativeFreq == NULL)
+		goto error;
 	initializeVAL_bg(bwt->cumulativeFreq, ALPHABET_SIZE + 1, 0);
 
 	bwt->bwtSizeInWord = 0;
@@ -356,6 +360,8 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable)
 	// Generate decode tables
 	if (decodeTable == NULL) {
 		bwt->decodeTable = (unsigned*)calloc(DNA_OCC_CNT_TABLE_SIZE_IN_WORD, sizeof(unsigned int));
+		if (bwt->decodeTable == NULL)
+			goto error;
 		GenerateDNAOccCountTable(bwt->decodeTable);
 	} else {
 		// FIXME Prevent BWTFree() from freeing decodeTable in this case
@@ -364,11 +370,27 @@ BWT *BWTCreate(const bgint_t textLength, unsigned int *decodeTable)
 
 	bwt->occMajorSizeInWord = BWTOccValueMajorSizeInWord(textLength);
 	bwt->occValueMajor = (bgint_t*)calloc(bwt->occMajorSizeInWord, sizeof(bgint_t));
+	if (bwt->occValueMajor == NULL)
+		goto error;
 
 	bwt->occSizeInWord = 0;
 	bwt->occValue = NULL;
 
 	return bwt;
+
+error:
+	if (bwt) {
+		if (bwt->cumulativeFreq)
+			free(bwt->cumulativeFreq);
+		if (decodeTable == NULL && bwt->decodeTable)
+			free(bwt->decodeTable);
+		if (bwt->occValueMajor)
+			free(bwt->occValueMajor);
+		free(bwt);
+	}
+	fprintf(stderr, "%s: failed to allocate memory.\n", __func__);
+	exit(EXIT_FAILURE);
+	return NULL;
 }
 
 BWTInc *BWTIncCreate(const bgint_t textLength, unsigned int initialMaxBuildSize, unsigned int incMaxBuildSize)
@@ -380,15 +402,21 @@ BWTInc *BWTIncCreate(const bgint_t textLength, unsigned int initialMaxBuildSize,
 	if (textLength < initialMaxBuildSize) initialMaxBuildSize = textLength;
 
 	bwtInc = (BWTInc*)calloc(1, sizeof(BWTInc));
+	if (bwtInc == NULL)
+		goto error;
 	bwtInc->numberOfIterationDone = 0;
 	bwtInc->bwt = BWTCreate(textLength, NULL);
 	bwtInc->initialMaxBuildSize = initialMaxBuildSize;
 	bwtInc->incMaxBuildSize = incMaxBuildSize;
 	bwtInc->cumulativeCountInCurrentBuild = (bgint_t*)calloc((ALPHABET_SIZE + 1), sizeof(bgint_t));
+	if (bwtInc->cumulativeCountInCurrentBuild == NULL)
+		goto error;
 	initializeVAL_bg(bwtInc->cumulativeCountInCurrentBuild, ALPHABET_SIZE + 1, 0);
 
 	// Build frequently accessed data
 	bwtInc->packedShift = (unsigned*)calloc(CHAR_PER_WORD, sizeof(unsigned int));
+	if (bwtInc->packedShift == NULL)
+		goto error;
 	for (i=0; i<CHAR_PER_WORD; i++)
 		bwtInc->packedShift[i] = BITS_IN_WORD - (i+1) * BIT_PER_CHAR;
 
@@ -399,8 +427,24 @@ BWTInc *BWTIncCreate(const bgint_t textLength, unsigned int initialMaxBuildSize,
 	if (bwtInc->availableWord < MIN_AVAILABLE_WORD) bwtInc->availableWord = MIN_AVAILABLE_WORD; // lh3: otherwise segfaul when availableWord is too small
 	fprintf(stderr, "[%s] textLength=%ld, availableWord=%ld\n", __func__, (long)textLength, (long)bwtInc->availableWord);
 	bwtInc->workingMemory = (unsigned*)calloc(bwtInc->availableWord, BYTES_IN_WORD);
+	if (bwtInc->workingMemory == NULL)
+		goto error;
 
 	return bwtInc;
+
+error:
+	if (bwtInc) {
+		if (bwtInc->cumulativeCountInCurrentBuild)
+			free(bwtInc->cumulativeCountInCurrentBuild);
+		if (bwtInc->packedShift)
+			free(bwtInc->packedShift);
+		if (bwtInc->workingMemory)
+			free(bwtInc->workingMemory);
+		free(bwtInc);
+	}
+	fprintf(stderr, "%s: failed to allocate memory.\n", __func__);
+	exit(EXIT_FAILURE);
+	return NULL;
 }
 // for BWTIncConstruct()
 static void BWTIncPutPackedTextToRank(const unsigned int *packedText, bgint_t* __restrict rank,

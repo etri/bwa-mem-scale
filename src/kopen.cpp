@@ -290,12 +290,25 @@ static char **cmd2argv(const char *cmd)
 		if (isspace(cmd[i]) && !isspace(cmd[i-1]))
 			++argc;
 	argv = (char**)calloc(argc + 2, sizeof(void*));
+	if (argv == NULL)
+		goto error;
 	argv[0] = str = (char*)calloc(end - beg + 1, 1);
+	if (str == NULL)
+		goto error;
 	strncpy_s(argv[0], end - beg + 1, cmd + beg, end - beg);
 	for (i = argc = 1; i < end - beg; ++i)
 		if (isspace(str[i])) str[i] = 0;
 		else if (str[i] && str[i-1] == 0) argv[argc++] = &str[i];
 	return argv;
+
+error:
+	if (argv)
+		free(argv);
+	if (str)
+		free(str);
+	fprintf(stderr, "%s: ailed to allocate memory.", __func__);
+	exit(EXIT_FAILURE);
+	return NULL;
 }
 
 #define KO_STDIN    1

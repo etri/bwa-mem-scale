@@ -592,6 +592,8 @@ void FMI_search::pac2nt(const char *fn_pac, std::string &reference_seq)
             case 'T':
                 reference_seq += "A";
             break;
+	    default: /* cannot reach here */
+	    break;
         }
     }
 	free(buf2);

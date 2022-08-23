@@ -121,6 +121,7 @@ void handleDivergence(const bwt_t* bwt, const bntseq_t *bns, const uint8_t *pac,
 			ik_new = ok_copy[i]; ik_new.info = depth+1;
 			memcpy_bwamem(n->seq, READ_LEN * sizeof(uint8_t), parent_node->seq, parent_node->l_seq*sizeof(uint8_t), __FILE__, __LINE__);
 			assert(depth >= 0);
+			assert(depth < READ_LEN);
 			n->seq[depth] = i;
 			n->pos = depth;
 			n->num_bp = 1;
@@ -132,6 +133,8 @@ void handleDivergence(const bwt_t* bwt, const bntseq_t *bns, const uint8_t *pac,
 		}
 		else {
 			memcpy_bwamem(n->seq, READ_LEN * sizeof(uint8_t), parent_node->seq, parent_node->l_seq*sizeof(uint8_t), __FILE__, __LINE__);
+			assert(depth >= 0);
+			assert(depth < READ_LEN);
 			n->seq[depth] = i;
 			n->pos = depth;
 			n->num_bp = 1;
@@ -161,6 +164,7 @@ void ert_build_kmertree(const bwt_t* bwt, const bntseq_t *bns, const uint8_t *pa
 		memset_s(n->child_nodes, 4*sizeof(node_t*), 0);
 		memcpy_bwamem(n->seq, READ_LEN * sizeof(uint8_t), parent_node->seq, parent_node->l_seq*sizeof(uint8_t), __FILE__, __LINE__);
 		assert(depth >= 0);
+		assert(depth < READ_LEN);
 		n->seq[depth] = uniform_bp;
 		n->numHits = ok[uniform_bp].x[2];
 		n->l_seq = depth + 1;
