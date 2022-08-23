@@ -1,8 +1,8 @@
 /*************************************************************************************
                            The MIT License
 
-   BWA-MEM2  (Sequence alignment using Burrows-Wheeler Transform),
-   Copyright (C) 2019  Intel Corporation, Heng Li.
+   BWA-MEM-SCALE (Memory-Scalable Sequence alignment using Burrows-Wheeler Transform),
+   Copyright (C) 2022 Electronics and Telecommunications Research Institute (ETRI), Changdae Kim.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -24,7 +24,16 @@
    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-Authors: Vasimuddin Md <vasimuddin.md@intel.com>; Sanchit Misra <sanchit.misra@intel.com>.
+   Contacts: Changdae Kim <cdkim@etri.re.kr>
+
+** This software builds upon BWA-MEM2, and includes several performance optimization techniques.
+   For BWA-MEM2, refer to the follows.
+
+   BWA-MEM2 (Sequence alignment using Burrows-Wheeler Transform)
+   Copyright ⓒ 2019 Intel Corporation, Heng Li
+   The MIT License
+   Website: https://github.com/bwa-mem2/bwa-mem2
+
 *****************************************************************************************/
 
 #ifndef __INDEX_ELE_HPP
