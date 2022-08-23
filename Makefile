@@ -66,15 +66,15 @@ SAFE_STR_LIB=    ext/safestringlib/libsafestring.a
 EXE_BASE=bwa-mem2
 DEPEND_CPPFLAGS=
 
-ifeq ($(scale),1)
+ifeq ($(scale),0)
+DEPEND_CPPFLAGS+= -DMEMSCALE
+else
 CPPFLAGS+= -DMEMSCALE
 shm=1
 perfect=1
 accel=1
 ert=1
 rwopt=1
-else
-DEPEND_CPPFLAGS+= -DMEMSCALE
 endif
 
 ifeq ($(shm),1)
@@ -118,10 +118,10 @@ EXE_RWOPT=$(EXE_ERT)
 DEPEND_CPPFLAGS+= -DOPT_RW
 endif
 
-ifeq ($(scale),1)
-EXE_MEMSCALE=$(addsuffix .scale,$(EXE_BASE))
-else
+ifeq ($(scale),0)
 EXE_MEMSCALE=$(EXE_RWOPT)
+else
+EXE_MEMSCALE=$(addsuffix .scale,$(EXE_BASE))
 endif
 
 ifeq ($(aff),1)
