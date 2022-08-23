@@ -361,7 +361,7 @@ int load_perfect_table(const char *prefix, int len,
 		return -1;	
 	}
 	
-	snprintf_s_si(file_name, PATH_MAX, "%s.perfect.%d", prefix, len);
+	snprintf(file_name, PATH_MAX, "%s.perfect.%d", prefix, len);
 
 
 	if (__load_perfect_table(file_name, len, &perfect_table)) {

@@ -1453,7 +1453,7 @@ int perfect_build_index(const char *prefix, int seed_len, double slack)
 	ambs = amb_restore(prefix, &seq_len, &n_holes);
 	load_ref_string(prefix, &ref_string);
 	
-	snprintf_s_si(file_name, PATH_MAX, "%s.perfect.%d", prefix, seed_len);
+	snprintf(file_name, PATH_MAX, "%s.perfect.%d", prefix, seed_len);
 	__perfect_build_index(file_name, ref_string, seq_len, slack, seed_len, 
 							anns, n_seqs, ambs, n_holes);
 	_mm_free(ref_string);

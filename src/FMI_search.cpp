@@ -300,7 +300,7 @@ static int __load_smem_table_from_file(const char *prefix,
 		}
 
 		fprintf(stderr, "INFO: load all smem table from file (len: %d)\n", ALL_SMEM_MAX_BP);
-		snprintf_s_si(all_smem_fn, PATH_MAX, "%s.all_smem.%d", prefix, ALL_SMEM_MAX_BP);
+		snprintf(all_smem_fn, PATH_MAX, "%s.all_smem.%d", prefix, ALL_SMEM_MAX_BP);
 		fp = xopen(all_smem_fn, "rb");
 		err_fread_noeof(all_smem_table, sizeof(all_smem_t),
 					__num_smem_table_entry(ALL_SMEM_MAX_BP), fp);
@@ -326,7 +326,7 @@ static int __load_smem_table_from_file(const char *prefix,
 		}
 
 		fprintf(stderr, "INFO: load last smem table from file (len: %d)\n", LAST_SMEM_MAX_BP);
-		snprintf_s_si(last_smem_fn, PATH_MAX, "%s.last_smem.%d", prefix, LAST_SMEM_MAX_BP);
+		snprintf(last_smem_fn, PATH_MAX, "%s.last_smem.%d", prefix, LAST_SMEM_MAX_BP);
 		fp = xopen(last_smem_fn, "rb");
 		err_fread_noeof(last_smem_table, sizeof(last_smem_t),
 					__num_smem_table_entry(LAST_SMEM_MAX_BP), fp);

@@ -118,15 +118,15 @@ char *bwa_shm_mmap_filename(int m, char *buf) {
 	} else if (m == BWA_SHM_PERFECT) {
 		if (perfect_table_seed_len <= 0)
 			return NULL;
-		snprintf_s_si(buf, PATH_MAX, "%s.perfect.%d", mmap_prefix, perfect_table_seed_len);
+		snprintf(buf, PATH_MAX, "%s.perfect.%d", mmap_prefix, perfect_table_seed_len);
 		return buf;
 #endif
 #ifdef SMEM_ACCEL
 	} else if (m == BWA_SHM_SALL) {
-		snprintf_s_si(buf, PATH_MAX, "%s.all_smem.%d", mmap_prefix, ALL_SMEM_MAX_BP);
+		snprintf(buf, PATH_MAX, "%s.all_smem.%d", mmap_prefix, ALL_SMEM_MAX_BP);
 		return buf;
 	} else if (m == BWA_SHM_SLAST) {
-		snprintf_s_si(buf, PATH_MAX, "%s.all_smem.%d", mmap_prefix, LAST_SMEM_MAX_BP);
+		snprintf(buf, PATH_MAX, "%s.all_smem.%d", mmap_prefix, LAST_SMEM_MAX_BP);
 		return buf;
 #endif
 	} else {
@@ -1320,7 +1320,7 @@ static int get_hugepages(enum hugetlb_mode *mode_in, size_t shm_size, int opt_fo
 
 #ifdef PERFECT_MATCH
 static inline void get_perfect_table_filename(char *buf, const char *prefix, int seed_len) {
-	snprintf_s_si(buf, PATH_MAX, "%s.perfect.%d", prefix, seed_len);
+	snprintf(buf, PATH_MAX, "%s.perfect.%d", prefix, seed_len);
 	return;
 }
 
