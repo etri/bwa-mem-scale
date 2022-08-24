@@ -236,7 +236,7 @@ enum bwa_shm_init_mode {
 };
 
 
-void bwa_shm_init(const char *ref_file_name, int *useErt, enum bwa_shm_init_mode mode);
+void bwa_shm_init(const char *ref_file_name, int *useErt, int pt_seed_len, enum bwa_shm_init_mode mode);
 void bwa_shm_complete(enum bwa_shm_init_mode mode);
 void bwa_shm_final(enum bwa_shm_init_mode mode);
 

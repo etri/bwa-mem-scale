@@ -74,6 +74,8 @@ int opt_bwa_shm_map_touch = 0;
 static const char *mmap_prefix = NULL;
 
 void *__load_file(const char *prefix, const char *postfix, void *buf, size_t *size);
+int __bwa_shm_load(const char *prefix, enum hugetlb_mode huge_mode, int huge_force,
+			int pt_seed_len, int pt_mmap, size_t gb_limit);
 
 int use_mmap(int m) {
 #ifdef PERFECT_MATCH
@@ -635,7 +637,7 @@ static void __bwa_shm_init_data(const char *prefix) {
 		set_mmap_prefix(prefix);
 }
 
-void bwa_shm_init(const char *prefix, int *useErt, 
+void bwa_shm_init(const char *prefix, int *useErt, int pt_seed_len,
 							enum bwa_shm_init_mode mode) 
 {
 	struct stat ref_stat;		
@@ -888,7 +890,12 @@ renewal:
 #ifdef PERFECT_MATCH
 	info->pt_num_loc_entry = 0;
 	info->pt_num_seed_entry = 0;
-	info->pt_seed_len = 0;
+	if (pt_seed_len > 0
+			&& pt_seed_len != PT_SEED_LEN_NO_TABLE
+			&& pt_seed_len != PT_SEED_LEN_AUTO_TABLE)
+		info->pt_seed_len = pt_seed_len;
+	else
+		info->pt_seed_len = 0;
 	info->pt_mmap = DEFAULT_MMAP_PERFECT;
 #endif
 
@@ -906,6 +913,13 @@ renewal:
 	free(abs_path);
 	fprintf(stderr, "BWA_SHM_MODE: RENEWAL\n");
 
+#ifdef MEMSCALE
+	if (mode == BWA_SHM_INIT_READ) {
+		__bwa_shm_load(prefix, BWA_SHM_NORMAL_PAGE, 0,
+				info->pt_seed_len, info->pt_mmap, 0);
+		bwa_shm_mode = BWA_SHM_MATCHED;
+	}
+#endif
 	return;
 
 disable:
@@ -1636,6 +1650,7 @@ reset_newinfo:
 		new_info->pt_num_loc_entry = num_pt_loc;  
 		new_info->pt_num_seed_entry = num_pt_seed;  
 	} else {
+		fprintf(stderr, "[memscale] Read length is not given. Perfect match table will not be used.\n");
 		size_pt = 0;
 		size_pt_head = 0;
 		size_pt_loc = 0;
@@ -1702,7 +1717,8 @@ reset_newinfo:
 	}
 
 	/* the second best is the perfect matching. */
-	if (rem >= __aligned_size(size_pt_head + size_pt_loc 
+	if (pt_seed_len > 0
+		&& rem >= __aligned_size(size_pt_head + size_pt_loc
 					+ __aligned_size(sizeof(seed_entry_t), 64), 
 					huge_unit)) {
 		size_t size_load_pt;
@@ -2101,7 +2117,7 @@ int bwa_shm_load(int argc, char *argv[]) {
 		}
 	}
 	
-	bwa_shm_init(prefix, &useErt, init_mode);
+	bwa_shm_init(prefix, &useErt, pt_seed_len, init_mode);
 	
 	if (bwa_shm_mode == BWA_SHM_DISABLE) {
 		fprintf(stderr, "ERROR: failed to init shm\n");

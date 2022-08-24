@@ -1176,7 +1176,7 @@ int main_mem(int argc, char *argv[])
 	}
 #endif
 #ifdef USE_SHM
-	bwa_shm_init(argv[optind], &useErt, BWA_SHM_INIT_READ);
+	bwa_shm_init(argv[optind], &useErt, perfect_table_seed_len, BWA_SHM_INIT_READ);
 #endif
     
     /* Matrix for SWA */
