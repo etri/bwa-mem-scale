@@ -50,10 +50,14 @@ uint64_t proc_freq, tprof[LIM_R][LIM_C], prof[LIM_R];
 
 int usage()
 {
-    fprintf(stderr, "Usage: bwa-mem2 <command> <arguments>\n");
+    fprintf(stderr, "Usage: bwa-mem2.scale <command> <arguments>\n");
     fprintf(stderr, "Commands:\n");
     fprintf(stderr, "  index         create index\n");
+    fprintf(stderr, "  perfect-index create index for perfect match\n");
+    fprintf(stderr, "  smem-table    create index for FM-index accelerator\n");
     fprintf(stderr, "  mem           alignment\n");
+    fprintf(stderr, "  load-shm      load index on process shared memory\n");
+    fprintf(stderr, "  remove-shm    remove index from process shared memory\n");
     fprintf(stderr, "  version       print version number\n");
     return 1;
 }
