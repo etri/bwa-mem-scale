@@ -30,9 +30,9 @@ make -j<num_threads> scale=1 arch=avx2
 # If SSE4.1 (128-bit SIMD) is supported (default)
 make -j<num_threads> scale=1
 
-# Build index (Takes ~2 hr for human genome with 56 threads. 1 hr for BWT, 1 hr for ERT)
+# Build index (Takes 3.2 hr for human genome in our 40-core system. 0.7 hr for BWT, 2.2 hr for ERT)
 ./bwa-mem2.scale index -p <index prefix> <input.fasta> # Generate FM-index of BWA-MEM2. Take ~1hour.
-./bwa-mem2.scale index -a ert -t <num threads> -p <index prefix> <input.fasta) # Generate ERT index. Take 4~5 hours with 8 threads
+./bwa-mem2.scale index -a ert -t <num threads> -p <index prefix> <input.fasta> # Generate ERT index. Take 4~5 hours with 8 threads
 ./bwa-mem2.scale smem-table <index prefix> # Generate FM-index Accelerator (FMA) indices. Take ~1min.
 ./bwa-mem2.scale perfect-index –l <seed length> <index prefix> # Exact Match Filter (EMF) index. Take ~20min. <seed length> is the minimum read length.
 
